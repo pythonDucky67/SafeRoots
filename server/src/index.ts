@@ -1,5 +1,7 @@
 import http from 'http';
 import express from 'express';
+import path from 'path';
+import { existsSync } from 'fs';
 import cors from 'cors';
 import helmet from 'helmet';
 import { Server as SocketServer } from 'socket.io';
@@ -20,7 +22,7 @@ import { getDb } from './db';
 dotenv.config();
 
 const PORT        = Number(process.env.PORT)        || 5000;
-const CORS_ORIGIN = process.env.CORS_ORIGIN         || 'http://localhost:3000';
+const CORS_ORIGIN = process.env.CORS_ORIGIN         || '*';
 
 // ─── Express app ─────────────────────────────────────────────────────────────
 
@@ -61,6 +63,19 @@ app.use('/api/transit',    transitRoutes);
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
 
 // 404 catch-all
+// Serve client static files when available (production build)
+const clientDist = path.join(__dirname, '..', '..', 'client', 'dist');
+if (existsSync(clientDist)) {
+  app.use(express.static(clientDist));
+
+  // SPA fallback — only for non-API routes
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(clientDist, 'index.html'));
+  });
+}
+
+// 404 catch-all for API routes / when client not present
 app.use((_req, res) => res.status(404).json({ error: 'Not found' }));
 
 // Global error handler
