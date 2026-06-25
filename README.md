@@ -1,5 +1,7 @@
 # SafeRoots 🛡
 
+Website: https://pythonDucky67.github.io/SafeRoots/
+
 **SafeRoots** helps women and marginalised communities access safe shelters, food, healthcare, and crisis resources. With real-time data, community feedback, and anonymous peer support, it empowers users to navigate hardship with dignity and confidence.
 
 > **Focus:** Women · LGBTQ+ individuals · BIPOC communities · Domestic violence survivors
